@@ -1,0 +1,82 @@
+{
+    "Home-page": {
+      "home": "Home",
+      "program": "Program",
+      "aboutUs": "About Us",
+      "campus": "Campus",
+      "testimonial": "Testimonial",
+      "contactUs": "Contact Us",
+      "hero-h1": "We ensure better education for a better world",
+      "hero-p": "Our cutting-edge curriculum is designed to empower students with the knowledge skills and experiences needed to excel in the dynamic field of education",
+      "hero-Explore-button": "Explore More"
+    },
+    "titles": {
+      "our-programs": "OUR PROGRAMS",
+      "what-we-offer": "What We Offer",
+      "gallary" : "GALLARY",
+      "campus-photos" : "Campus photos",
+      "testimonials" : "TESTIMONIALS",
+      "whatstudent" : "What Student Says",
+      "contact" : "CONTACT US",
+      "get-in-touch": "Get in touch"
+
+
+
+    },
+    "about": {
+        "grad": "Graduation Degree", 
+        "master" : "Master Degree",
+        "post": "Post Graduation", 
+        "about-uni": "ABOUT UNIVERSITY", 
+        "nurt"  : " Nurturing Tomorrow's Leaders Today",
+        "about-p1" : " Embark on a transformative education journey with our university's comprehensive education programs. Our cutting-edge curriculum is designed to empower students with the knowledge, skills, and experiences needed to excel in the dynamic field of education.",
+        "about-p2": " With a focus on innovaiton, hands-on learing, and personalized mentorship, our programs prepare aspiring educators to make a meaningful impan=ct in classrooms, schools, and communities.", 
+        "about-p3" : " Whether you aspire to become a teacher, administrotor, counselor, or educational leader, our diverse range of programs offers the prefect pathway to achieve your goals and unlock your full potential in shaping the future fo education."
+    },
+    
+    "campus" : {
+        "camp-btn"  : "See More Here "
+
+    },
+
+    "testimonial" : {
+        "username-1" : "William Jackson 1 ",
+        "username-2" : "William Jackson 2 ",
+        "username-3" : "William Jackson 3 ",
+        "username-4" : "William Jackson 4 ",
+        "user1-loc" : "Edusity, NETHERLANDS",
+        "user2-loc" : "Edusity, SUDAN",
+        "user3-loc" : "DOHA, QATAR",
+        "user4-loc" : "Edusity, UK",
+        "user1p" : "Choosing to pursue my degree at Education was one of the best decisions I've ever made. The supportive community, state-of-the-art facilities, and commitment to academic excellence have truly exceeded my expectations"
+
+
+    },
+
+    "contact" : {
+        "send-us": "Send us a message",
+        "contact-p" : "Feel free to reach out through contact form or find our contact information below. YOur feedback, questions, and suggestions are important to us as we strive to provide exceptional service to our university community.",
+        "contact-city" : "Doha",
+        "contact-country"  : "QATAR", 
+        "your-name"  : "Your name", 
+        "enter-name" : "Enter your name", 
+        "phone": "Phone Number",
+        "enter-phone" : "Enter your phone number",
+        "write-msg" : "Write your message here", 
+        "enter-msg" : "Enter your message",
+        "sub-btn"  : "Submit Now"
+
+    }, 
+
+    "signup" : {
+        "fname" : "First Name",  
+        "last-name" :  "Last Name ", 
+        "username" : "Username",
+        "register":  "Regiter"
+
+    }
+
+
+
+  }
+  
