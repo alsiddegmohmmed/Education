@@ -68,13 +68,20 @@
 
     }, 
 
-    "signup" : {
-        "fname" : "First Name",  
-        "last-name" :  "Last Name ", 
-        "username" : "Username",
-        "register":  "Regiter"
+    
 
-    }
+     "signup": {
+          "firstName": "First Name",
+          "enterFirstName": "Enter your first name",
+          "lastName": "Last Name",
+          "enterLastName": "Enter your last name",
+          "email": "Email",
+          "enterEmail": "Enter your email",
+          "password": "Password",
+          "enterPassword": "Enter your password",
+          "submit": "Sign Up"
+        }
+      
 
 
 
