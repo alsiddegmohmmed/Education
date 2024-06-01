@@ -51,6 +51,11 @@ a {
     margin-left: 10px;
 }
 
+.sign-container {
+    margin-top: 20px; /* Adjust the value as needed */
+    padding: 20px;
+}
+
 
 @media (max-width:1200px) {
     .contianer {
