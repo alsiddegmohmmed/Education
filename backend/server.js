@@ -51,6 +51,17 @@ if (process.env.NODE_ENV === 'production') {
     }
   })
 
+  app.post('/api/addUsers', async (req, res) => {
+    const { name, email, password, role } = req.body;
+    const newUser = new User({ name, email, password, role });
+    try {
+      const savedUser = await newUser.save();
+      res.json(savedUser);
+    } catch (err) {
+      res.status(500).send(err);
+    }
+  });
+
 app.use(notFound); 
 app.use(errorHandler); 
 app.listen(port, () => console.log(`Server started on  port ${port}`));

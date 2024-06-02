@@ -5,6 +5,7 @@ import { LinkContainer } from 'react-router-bootstrap';
 import { logout } from '../../slices/authSlice';
 import { useLogoutMutation } from '../../slices/usersApiSlice';
 import { useNavigate } from 'react-router-dom';
+import ModalForm from '../modelform/ModalForm.jsx';
 
 
 
@@ -20,6 +21,7 @@ const TeacherDashboard = () => {
     const  [logoutApiCall] = useLogoutMutation(); 
     const dispatch = useDispatch(); 
     const navigate = useNavigate(); 
+    const [showModal, setShowModal] = useState(false);
    
 
     const logoutHandler = async () => {
@@ -69,7 +71,16 @@ const TeacherDashboard = () => {
             });
         }
     };
-    
+
+   
+  
+    const handleShowModal = () => setShowModal(true);
+    const handleCloseModal = () => setShowModal(false);
+  
+    const handleAddUser = (newUser) => {
+      setUsers([...users, newUser]);
+      handleCloseModal();
+    };
 
     return (
         <div>
@@ -80,7 +91,7 @@ const TeacherDashboard = () => {
             </div>
             <div className='d-flex flex-row gap-5'>
         
-            <Button variant="primary"> Add new user </Button>
+            <Button variant="primary" onClick={handleShowModal}> Add new user </Button>
             <Button variant="primary" onClick={logoutHandler}> Logout </Button>
             </div>
             </div>
@@ -118,6 +129,7 @@ const TeacherDashboard = () => {
 
                     </tbody>
                 </Table>
+                <ModalForm show={showModal} handleClose={handleCloseModal} handleSubmit={handleAddUser}  />
 
             <Button variant="primary" onClick={logoutHandler}> Logout </Button>
         </div>
