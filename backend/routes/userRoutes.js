@@ -20,7 +20,7 @@ import asyncHandler from 'express-async-handler';
 router.post('/', registerUser);
 router.post('/auth', authUser);
 router.post('/logout', logoutUser);
-router.route('/profile')
+router.route('/home/profile')
   .get(protect, getUserProfile)
   .put(protect, updateUserProfile);
 

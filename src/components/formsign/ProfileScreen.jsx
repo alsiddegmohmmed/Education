@@ -98,6 +98,9 @@ const ProfileScreen = () => {
           Update
         </Button>
 
+        <Button  variant='primary' className='mt-3'>
+          <Link to="/home" > go back </Link> </Button>
+
         {isLoading && <Loader />}
       </Form>
     </FormContainer>

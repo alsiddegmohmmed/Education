@@ -58,7 +58,7 @@ export default function Navbar() {
         <li> <ScrollLink to='contact' smooth={true} offset={-260}duration={500} className='btn'>{t("Home-page.contactUs")}</ScrollLink></li>
         <li>
         <NavDropdown title= {userInfo.name} id='username'>
-          <LinkContainer to= 'profile' >
+          <LinkContainer to= '/home/profile ' >
             <NavDropdown.Item>Profile</NavDropdown.Item>
           </LinkContainer>
           <NavDropdown.Item onClick={logoutHandler}> Logout </NavDropdown.Item>

@@ -37,7 +37,7 @@ const RootComponent = () => (
             <Route path="/home" element={<HomePage />} />
           </Route>
           <Route path= '' element={<PrivateRoute />}>
-            <Route path="/profile" element={<ProfileScreen />} />
+            <Route path="/home/profile" element={<ProfileScreen />} />
           </Route>
           <Route path= '' element={<PrivateRoute />}>
             <Route path="/teacher-dashboard" element={<TeacherDashboard />} />
