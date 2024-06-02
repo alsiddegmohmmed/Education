@@ -1,3 +1,4 @@
+// ModalForm.js
 import React from 'react';
 import axios from 'axios';
 import './ModalForm.css';
@@ -9,12 +10,15 @@ const ModalForm = ({ show, handleClose, handleSubmit }) => {
     const data = {
       name: formData.get('name'),
       email: formData.get('email'),
+      password: formData.get('password'),
       role: formData.get('role'),
-      password: formData.get('password'), 
     };
     
+
+    console.log('Form data:', data); // Log the data being sent
+
     try {
-      const response = await axios.post('/api/users', data);
+      const response = await axios.post('/api/addUsers', data);
       handleSubmit(response.data);
     } catch (error) {
       console.error('Error adding user:', error);
@@ -31,8 +35,8 @@ const ModalForm = ({ show, handleClose, handleSubmit }) => {
           <input type="text" id="name" name="name" required />
           <label htmlFor="email">Email:</label>
           <input type="email" id="email" name="email" required />
-          <label htmlFor="text">Password:</label>
-          <input type="text" id="password" name="password" required />
+          <label htmlFor="password">Password:</label>
+          <input type="password" id="password" name="password" required />
           <label htmlFor="role">Role:</label>
           <input type="text" id="role" name="role" />
           <button type="submit">Submit</button>

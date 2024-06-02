@@ -54,11 +54,13 @@ if (process.env.NODE_ENV === 'production') {
   app.post('/api/addUsers', async (req, res) => {
     const { name, email, password, role } = req.body;
     const newUser = new User({ name, email, password, role });
+  
     try {
       const savedUser = await newUser.save();
       res.json(savedUser);
     } catch (err) {
-      res.status(500).send(err);
+      console.error('Error saving user:', err); // Log the error
+      res.status(500).json({ error: err.message });
     }
   });
 
