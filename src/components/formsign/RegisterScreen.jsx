@@ -30,7 +30,7 @@ const RegisterScreen = () => {
 
     useEffect(() => {
         if (userInfo) {
-            navigate('/home');
+            navigate('/');
         }
     }, [navigate, userInfo]);
 
@@ -96,7 +96,7 @@ const RegisterScreen = () => {
             try {
                 const res = await register({ name, email, password, role }).unwrap(); 
                 dispatch(setCredentials({ ...res }));
-                navigate('/home');
+                navigate('/');
             } catch (err) {
                 const errorMessage = err?.data?.message || err.error;
                 if (errorMessage.includes("email")) {

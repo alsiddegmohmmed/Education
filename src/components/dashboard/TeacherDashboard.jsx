@@ -7,6 +7,7 @@ import { useLogoutMutation } from '../../slices/usersApiSlice';
 import { useNavigate } from 'react-router-dom';
 
 
+
 import Loader from '../Loader.jsx'
 import Message from './Message.jsx';
 import axios from 'axios';
@@ -19,6 +20,7 @@ const TeacherDashboard = () => {
     const  [logoutApiCall] = useLogoutMutation(); 
     const dispatch = useDispatch(); 
     const navigate = useNavigate(); 
+   
 
     const logoutHandler = async () => {
         try {
@@ -32,55 +34,56 @@ const TeacherDashboard = () => {
 
 
       useEffect(() => {
-        // Fetch data from MockAPI
-        // axios.get('https://664db618ede9a2b5565486f8.mockapi.io/api/v1/user')
-        axios.get('/api/getUsers')
-          .then(response => {
-            setUsers(response.data);
-            setLoading(false);
-          })
-          .catch(error => {
-            setError(error);
-            setLoading(false);
-          });
+       getAllUsers(); 
       }, []);
-
-    // useEffect(() => {
-        
+    
  
+      const getAllUsers = () => {
+        axios.get('/api/getUsers')
+        .then(response => {
+          setUsers(response.data);
+          setLoading(false);
+        })
+        .catch(error => {
+          setError(error);
+          setLoading(false);
+        });
+      }
 
-    //     // const fetchUsers = async () => {
-    //         // try {
-    //             // axios.get('http://localhost:3000/getUsers')
-    //             // .then(users => (users.data))
-    //             // .catch(err => console.log(err))
-    //             // // const { data } = await axios.get('/api/users');
-    //             // // setUsers(data);
-    //             // setLoading(false);
-                
-    //         // } catch (error) {
-    //         //     setError(error.response.data.message || 'Something went wrong');
-    //         //     setLoading(false);
-    //         // }
-    //     // };
 
-    //     // fetchUsers();
-    // }, []);
-
-    const deleteUser = async (id) => {
-        if (window.confirm('Are you sure?')) {
-            try {
-                await axios.delete(`/api/getUsers/${id}`);
-                setUsers(users.filter((user) => user._id !== id));
-            } catch (error) {
-                setError(error.response.data.message || 'Something went wrong');
-            }
+      const deleteUser = (id, name) => {
+        const token = localStorage.getItem('token'); // Adjust this based on how you store the token
+    
+        if (window.confirm(`Are you sure you want to delete ${name}`)) {
+            axios.delete(`/api/users/${id}`, {
+                headers: {
+                    Authorization: `Bearer ${token}`
+                }
+            })
+            .then(response => {
+                alert(response.data.message);
+                getAllUsers()
+            })
+            .catch(error => {
+                console.error('There was an error deleting the user!', error);
+            });
         }
     };
+    
 
     return (
         <div>
+            <div className='d-flex justify-content-between mx-7'>
+            <div className='d-flex flex-row gap-5 '>
             <h1>Dashboard</h1>
+            <h3 className='pt-2'>Welcome back {userInfo.name}</h3>
+            </div>
+            <div className='d-flex flex-row gap-5'>
+        
+            <Button variant="primary"> Add new user </Button>
+            <Button variant="primary" onClick={logoutHandler}> Logout </Button>
+            </div>
+            </div>
             {/* {error && <div className="alert alert-danger">{error}</div>}
             {loading ? (
                 <div>Loading...</div>
@@ -104,7 +107,7 @@ const TeacherDashboard = () => {
                                     <td>
                                         <Button
                                             variant="danger"
-                                            onClick={() => deleteUser(user._id)}
+                                            onClick={() => deleteUser(user._id, user.name)}
                                         >
                                             Delete
                                         </Button>
@@ -126,3 +129,29 @@ const TeacherDashboard = () => {
 
 
 export default TeacherDashboard;
+
+
+
+
+
+
+
+
+
+
+
+
+const deleteUser= (id, name) => {
+    if(window.confirm(`are you sure you want to delete %{name}`)) {
+        
+    }
+    axios.get('/api/deleteUesr')
+          .then(response => {
+            setUsers(response.data);
+            setLoading(false);
+          })
+          .catch(error => {
+            setError(error);
+            setLoading(false);
+   });
+}

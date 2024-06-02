@@ -37,6 +37,21 @@ if (process.env.NODE_ENV === 'production') {
       res.send('API is running....');
     });
   }
+
+  app.get("/api/deleteUser", async(req, res) => {
+    const {userid} = req.body
+    try {
+      User.deleteOne(
+        {_id:userid}, function(err, res) {
+          console.log(err)
+        });
+        res.send({status: "Ok", data: "Deleted"});
+    } catch (error) {
+      console.log(error)
+    }
+  })
+
 app.use(notFound); 
 app.use(errorHandler); 
 app.listen(port, () => console.log(`Server started on  port ${port}`));
+
