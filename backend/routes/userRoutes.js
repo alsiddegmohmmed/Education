@@ -10,7 +10,8 @@ import {
     getUsers,
     updateUser,
     deleteUser,
-    createUser
+    createUser,
+    getStudents,
 } from "../controllers/userController.js";
 
 import { protect, teacher } from "../middleware/authMiddleware.js";
@@ -20,7 +21,7 @@ import asyncHandler from 'express-async-handler';
 router.post('/', registerUser);
 router.post('/auth', authUser);
 router.post('/logout', logoutUser);
-router.route('/home/profile')
+router.route('/profile')
   .get(protect, getUserProfile)
   .put(protect, updateUserProfile);
 
@@ -30,7 +31,8 @@ router.route('/teacher-dashboard')
 router.route('/')
     .get(protect, teacher, getUsers)  // Changed from admin to teacher
     .post(protect, teacher, createUser); // Changed from admin to teacher
-
+router.route('/students')
+    .get( getStudents); 
 // router.route('/:id').put(protect, teacher, updateUser) ;
 router.route('/:id').delete(protect, deleteUser).put(protect, updateUser);
 

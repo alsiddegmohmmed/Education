@@ -10,12 +10,19 @@ import userRoutes from "./routes/userRoutes.js"
 import studentRoutes from "./routes/studentRoutes.js"
 import mongoose from "mongoose";
 import User from "./models/userModel.js";
+import cors from "cors"
+
 
 dotenv.config();
 
 connectDB();  
 
 const app = express(); 
+
+app.use(cors({
+  origin: 'http://localhost:3001'
+}));
+
 app.use(express.json())
 app.get('/api/getUsers', (req, res) => {
   User.find()

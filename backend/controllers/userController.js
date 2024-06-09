@@ -121,6 +121,11 @@ const getUsers = asyncHandler(async (req, res) => {
     res.status(200).json(users);
 });
 
+const getStudents = asyncHandler(async (req, res) => {
+    const students = await User.find({ role: 'student' }).sort({createdAt: -1});
+    res.status(200).json(students); // Make sure to send a proper status code
+});
+
 // @desc Create a new user
 // @route POST /api/users
 // @access Private/Teacher
@@ -151,21 +156,21 @@ const createUser = asyncHandler(async (req, res) => {
 // @desc Update user
 // @route PUT /api/users/:id
 // @access Private/Teacher
-const updateUser = asyncHandler(async (req, res) => {
-    const user = await User.findById(req.params.id);
+// const updateUser = asyncHandler(async (req, res) => {
+//     const user = await User.findById(req.params.id);
 
-    if (user) {
-        user.name = req.body.name || user.name;
-        user.email = req.body.email || user.email;
-        user.role = req.body.role || user.role;
+//     if (user) {
+//         user.name = req.body.name || user.name;
+//         user.email = req.body.email || user.email;
+//         user.role = req.body.role || user.role;
 
-        const updatedUser = await user.save();
-        res.status(200).json(updatedUser);
-    } else {
-        res.status(404);
-        throw new Error('User not found');
-    }
-});
+//         const updatedUser = await user.save();
+//         res.status(200).json(updatedUser);
+//     } else {
+//         res.status(404);
+//         throw new Error('User not found');
+//     }
+// });
 
 // @desc Delete user
 // @route DELETE /api/users/:id
@@ -192,4 +197,5 @@ export {
     createUser,
     updateUser,
     deleteUser,
+    getStudents, 
 };

@@ -18,6 +18,7 @@ import { Provider } from 'react-redux';
 import store from './store.js'
 
 import TeacherDashboard from './components/dashboard/TeacherDashboard.jsx';
+import TeacherProfile from './components/formsign/TeacherProfile.jsx';
 
 
 
@@ -37,11 +38,13 @@ const RootComponent = () => (
             <Route path="/home" element={<HomePage />} />
           </Route>
           <Route path= '' element={<PrivateRoute />}>
-            <Route path="/home/profile" element={<ProfileScreen />} />
+            <Route path="/profile" element={<ProfileScreen />} />
           </Route>
           <Route path= '' element={<PrivateRoute />}>
             <Route path="/teacher-dashboard" element={<TeacherDashboard />} />
+            <Route path='/teacher-profile' element={<TeacherProfile />} />
           </Route>
+          
         <Route path="*" element={<App />} /> {/* Default route, modify as needed */}
       </Routes>
     </Router>

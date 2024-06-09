@@ -1,10 +1,9 @@
 import React, { useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { Table, Button } from 'react-bootstrap';
-import { LinkContainer } from 'react-router-bootstrap';
 import { logout } from '../../slices/authSlice';
 import { useLogoutMutation } from '../../slices/usersApiSlice';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, Link } from 'react-router-dom';
 import ModalForm from '../modelform/ModalForm.jsx';
 
 
@@ -15,6 +14,7 @@ import axios from 'axios';
 
 const TeacherDashboard = () => {
     const [users, setUsers] = useState([]);
+    const [students, setStudents] = useState([]);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState('');
     const { userInfo } = useSelector((state) => state.auth);
@@ -36,7 +36,8 @@ const TeacherDashboard = () => {
 
 
       useEffect(() => {
-       getAllUsers(); 
+    //    getAllUsers(); 
+       getAllStudents ()
       }, []);
     
  
@@ -51,6 +52,18 @@ const TeacherDashboard = () => {
           setLoading(false);
         });
       }
+
+      const getAllStudents = () => {
+        axios.get('http://localhost:5000/api/users/students')
+          .then(response => {
+            setStudents(response.data);
+            setLoading(false);
+          })
+          .catch(error => {
+            setError(error.message);
+            setLoading(false);
+          });
+      };
 
 
       const deleteUser = (id, name) => {
@@ -93,6 +106,12 @@ const TeacherDashboard = () => {
         
             <Button variant="primary" onClick={handleShowModal}> Add new user </Button>
             <Button variant="primary" onClick={logoutHandler}> Logout </Button>
+             <Link to='/teacher-profile'>
+        <Button color='primary'>
+          Go to Teacher Profile
+        </Button>
+      </Link>
+           
             </div>
             </div>
             {/* {error && <div className="alert alert-danger">{error}</div>}
@@ -110,15 +129,15 @@ const TeacherDashboard = () => {
                     </thead>
                     <tbody>
                          {
-                                users.map(user => {
-                                    return <tr key={user._id}>
-                                    <td>{user.name}</td>
-                                    <td>{user.email}</td>
-                                    <td>{user.role}</td>
+                                students.map(student => {
+                                    return <tr key={student._id}>
+                                    <td>{student.name}</td>
+                                    <td>{student.email}</td>
+                                    <td>{student.role}</td>
                                     <td>
                                         <Button
                                             variant="danger"
-                                            onClick={() => deleteUser(user._id, user.name)}
+                                            onClick={() => deleteUser(student._id, student.name)}
                                         >
                                             Delete
                                         </Button>
