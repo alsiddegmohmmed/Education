@@ -1,6 +1,7 @@
 import asyncHandler from 'express-async-handler';
 import User from '../models/userModel.js';
 import generateToken from '../utils/generateToken.js';
+import Course from '../models/coursesModel.js';
 
 // @desc Auth user/set token
 // @route POST /api/users/auth
@@ -126,6 +127,21 @@ const getStudents = asyncHandler(async (req, res) => {
     res.status(200).json(students); // Make sure to send a proper status code
 });
 
+// @desc Get all course titles
+// @route GET /api/users/getcoursetitles
+// @access Public
+const getCourseTitles = asyncHandler(async (req, res) => {
+    const courses = await Course.find({}).course.populate('createdBy').execPopulate();
+    ; // Only fetch the title field
+    res.status(200).json(courses);
+  });
+  
+const searchCourses = asyncHandler(async (req, res) => {
+    const courses = await Course.find({title: { $regex: query, $options: 'i' },}).populate('createdBy').execPopulate();
+    ; // Only fetch the title field
+    res.status(200).json(courses);
+  });
+
 // @desc Create a new user
 // @route POST /api/users
 // @access Private/Teacher
@@ -156,21 +172,21 @@ const createUser = asyncHandler(async (req, res) => {
 // @desc Update user
 // @route PUT /api/users/:id
 // @access Private/Teacher
-// const updateUser = asyncHandler(async (req, res) => {
-//     const user = await User.findById(req.params.id);
+const updateUser = asyncHandler(async (req, res) => {
+    const user = await User.findById(req.params.id);
 
-//     if (user) {
-//         user.name = req.body.name || user.name;
-//         user.email = req.body.email || user.email;
-//         user.role = req.body.role || user.role;
+    if (user) {
+        user.name = req.body.name || user.name;
+        user.email = req.body.email || user.email;
+        user.role = req.body.role || user.role;
 
-//         const updatedUser = await user.save();
-//         res.status(200).json(updatedUser);
-//     } else {
-//         res.status(404);
-//         throw new Error('User not found');
-//     }
-// });
+        const updatedUser = await user.save();
+        res.status(200).json(updatedUser);
+    } else {
+        res.status(404);
+        throw new Error('User not found');
+    }
+});
 
 // @desc Delete user
 // @route DELETE /api/users/:id
@@ -187,6 +203,47 @@ const deleteUser = asyncHandler(async (req, res) => {
     }
 });
 
+
+const addCourse = asyncHandler(async (req, res) => {
+    const { title, description, content, createdBy } = req.body;
+    const files = req.files['files'] ? req.files['files'].map(file => file.path) : [];
+    const images = req.files['images'] ? req.files['images'].map(image => image.path) : [];
+  
+    // Debugging logs
+    console.log('Request Body:', req.body); 
+    console.log('Request Files:', req.files); 
+    console.log('Title:', title);
+    console.log('Description:', description);
+    console.log('Content:', content);
+    console.log('CreatedBy:', createdBy);
+  
+    if (!title || !description || !content || !createdBy) {
+      console.error('Missing required fields', { title, description, content, createdBy });
+      return res.status(400).json({ message: 'Missing required fields' });
+    }
+  
+    try {
+      const course = new Course({
+        title,
+        description,
+        content,
+        files,
+        images,
+        createdBy,
+      });
+      await course.save();
+      res.status(201).json(course);
+    } catch (error) {
+      console.error('Error creating course:', error);
+      res.status(400).json({ message: 'Error creating course', error: error.message });
+    }
+  });
+
+
+  
+  
+  
+
 export {
     authUser,
     registerUser,
@@ -198,4 +255,7 @@ export {
     updateUser,
     deleteUser,
     getStudents, 
+    addCourse, 
+    getCourseTitles,
+    searchCourses,
 };

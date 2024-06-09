@@ -1,19 +1,35 @@
-// src/context/AuthContext.js
-import React, { createContext, useContext, useState } from 'react';
+import React, { createContext, useState, useEffect } from 'react';
 
-const AuthContext = createContext();
+// Create a context
+export const AuthContext = createContext();
 
+// Create a provider component
 export const AuthProvider = ({ children }) => {
-  const [isAuthenticated, setIsAuthenticated] = useState(false);
+  const [user, setUser] = useState(null);
 
-  const login = () => setIsAuthenticated(true);
-  const logout = () => setIsAuthenticated(false);
+  useEffect(() => {
+    // Fetch user data from your authentication service or API
+    const fetchUserData = async () => {
+      try {
+        // Replace this with your actual API call to fetch user data
+        const userData = await fetchUserFromAPI();
+        setUser(userData);
+      } catch (error) {
+        console.error('Error fetching user data:', error);
+      }
+    };
+
+    fetchUserData();
+  }, []);
 
   return (
-    <AuthContext.Provider value={{ isAuthenticated, login, logout }}>
+    <AuthContext.Provider value={{ user }}>
       {children}
     </AuthContext.Provider>
   );
 };
 
-export const useAuth = () => useContext(AuthContext);
+// Mock function to simulate fetching user data from an API
+const fetchUserFromAPI = async () => {
+  return { _id: '60d0fe4f5311236168a109ca', name: 'John Doe' };
+};

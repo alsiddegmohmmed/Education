@@ -20,7 +20,7 @@ connectDB();
 const app = express(); 
 
 app.use(cors({
-  origin: 'http://localhost:3001'
+  origin: 'http://localhost:3000'
 }));
 
 app.use(express.json())
@@ -44,6 +44,7 @@ if (process.env.NODE_ENV === 'production') {
       res.send('API is running....');
     });
   }
+  
 
   app.get("/api/deleteUser", async(req, res) => {
     const {userid} = req.body

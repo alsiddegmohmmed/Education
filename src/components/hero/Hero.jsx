@@ -2,17 +2,20 @@
 import React from 'react'
 import '/src/components/hero/Hero.css'
 import { useTranslation } from 'react-i18next'
+import CourseSearch from '../courses/CourseSearch';
 
 
 
 function Hero() {
+const [t, i18n]  = useTranslation();
 
-  const [t, i18n]  = useTranslation();
   return (
     <div className='hero contianer' >
       <div className="hero-text">
         <h1>{t('Home-page.hero-h1')}</h1>
         <p>{t("Home-page.hero-p")} </p>
+        <CourseSearch />
+
              <button className="btn">{t("Home-page.hero-Explore-button")} <img src="/dark-arrow.png" alt="" /></button>
 
       </div>
