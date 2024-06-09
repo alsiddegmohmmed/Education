@@ -1,13 +1,10 @@
 import React, { useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
-import { Table, Button } from 'react-bootstrap';
+import { Table, Button, Card, Container, Row, Col } from 'react-bootstrap';
 import { logout } from '../../slices/authSlice';
 import { useLogoutMutation } from '../../slices/usersApiSlice';
 import { useNavigate, Link } from 'react-router-dom';
 import ModalForm from '../modelform/ModalForm.jsx';
-
-
-
 import Loader from '../Loader.jsx'
 import Message from './Message.jsx';
 import axios from 'axios';
@@ -96,29 +93,29 @@ const TeacherDashboard = () => {
     };
 
     return (
-        <div>
-            <div className='d-flex justify-content-between mx-7'>
-            <div className='d-flex flex-row gap-5 '>
-            <h1>Dashboard</h1>
-            <h3 className='pt-2'>Welcome back {userInfo.name}</h3>
-            </div>
-            <div className='d-flex flex-row gap-5'>
-        
-            <Button variant="primary" onClick={handleShowModal}> Add new user </Button>
-            <Button variant="primary" onClick={logoutHandler}> Logout </Button>
-             <Link to='/teacher-profile'>
-        <Button color='primary'>
-          Go to Teacher Profile
-        </Button>
-      </Link>
-           
-            </div>
-            </div>
+    <Container>
+        <Row className='my-4'>
+            <Col>
+                <Card>
+                    <Card.Body>
+                    <div className='d-flex justify-content-between'>
+                    <div>
+                        <h1>Dashboard</h1>
+                        <h3>Welcome back {userInfo.name}</h3>
+                    </div>
+                    <div>
+                
+                        <Button variant="primary" onClick={handleShowModal} className='me-2'> Add new user </Button>
+                        <Button variant="primary" onClick={logoutHandler} className='me-2 '> Logout </Button>
+                        <Link to='/teacher-profile'><Button variant='primary'>Go to Teacher Profile</Button> </Link>
+                
+                    </div>
+                </div>
             {/* {error && <div className="alert alert-danger">{error}</div>}
             {loading ? (
                 <div>Loading...</div>
             ) : ( */}
-                <Table striped bordered hover>
+                <Table striped bordered hover responsive className="mt-4">
                     <thead>
                         <tr>
                             <th>Name</th>
@@ -150,8 +147,12 @@ const TeacherDashboard = () => {
                 </Table>
                 <ModalForm show={showModal} handleClose={handleCloseModal} handleSubmit={handleAddUser}  />
 
-            <Button variant="primary" onClick={logoutHandler}> Logout </Button>
-        </div>
+                {/* <Button variant="primary" onClick={logoutHandler}> Logout </Button> */}
+                </Card.Body>
+            </Card>
+        </Col>
+      </Row>
+    </Container>
     );
 };
 
@@ -171,18 +172,3 @@ export default TeacherDashboard;
 
 
 
-
-const deleteUser= (id, name) => {
-    if(window.confirm(`are you sure you want to delete %{name}`)) {
-        
-    }
-    axios.get('/api/deleteUesr')
-          .then(response => {
-            setUsers(response.data);
-            setLoading(false);
-          })
-          .catch(error => {
-            setError(error);
-            setLoading(false);
-   });
-}
