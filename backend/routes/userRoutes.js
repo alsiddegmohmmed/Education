@@ -51,8 +51,19 @@ router.route('/courses').post(upload.fields([{ name: 'files' }, { name: 'images'
 
 router.get('/getcoursetitles', getCourseTitles);
 
-router.get('/searchCourses', searchCourses);
-
+router.get('/courses/search', async (req, res) => {
+  try {
+    const { query } = req.query;
+    console.log(`Searching for courses with query: ${query}`); // Debugging log
+    const courses = await Course.find({
+      title: { $regex: query, $options: 'i' }  // case-insensitive search
+    });
+    res.json(courses);
+  } catch (error) {
+    console.error('Error while searching courses:', error); // Detailed error log
+    res.status(500).json({ message: 'Server Error', error: error.message });
+  }
+});
 
 
 

@@ -136,11 +136,7 @@ const getCourseTitles = asyncHandler(async (req, res) => {
     res.status(200).json(courses);
   });
   
-const searchCourses = asyncHandler(async (req, res) => {
-    const courses = await Course.find({title: { $regex: query, $options: 'i' },}).populate('createdBy').execPopulate();
-    ; // Only fetch the title field
-    res.status(200).json(courses);
-  });
+
 
 // @desc Create a new user
 // @route POST /api/users
@@ -239,6 +235,18 @@ const addCourse = asyncHandler(async (req, res) => {
     }
   });
 
+  export const searchCourses = asyncHandler(async (req, res) => {
+    const { query } = req.query;
+    try {
+      const courses = await Course.find({
+        $text: { $search: query }
+      });
+      res.status(200).json(courses);
+    } catch (error) {
+      res.status(500).json({ message: 'Error searching courses', error });
+    }
+  });
+
 
   
   
@@ -257,5 +265,5 @@ export {
     getStudents, 
     addCourse, 
     getCourseTitles,
-    searchCourses,
+    
 };

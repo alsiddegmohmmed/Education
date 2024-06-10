@@ -1,45 +1,98 @@
 import React, { useState } from 'react';
-import axios from 'axios'; // Assuming you're using axios for HTTP requests
+import axios from 'axios';
+import { useNavigate } from 'react-router-dom';
+import { Container, TextField, Button, Grid, Card, CardContent, CardMedia, Typography, InputLabel } from '@mui/material';
+
+const styles = {
+  form: {
+    display: 'flex',
+    justifyContent: 'center',
+    margin: '20px 0',
+  },
+  textField: {
+    marginRight: '10px',
+    flex: 1,
+    color: 'white',
+  },
+  card: {
+    cursor: 'pointer',
+  },
+};
 
 const CourseSearch = () => {
   const [query, setQuery] = useState('');
   const [results, setResults] = useState([]);
+  const navigate = useNavigate();
 
-  const handleChange = (e) => {
-    setQuery(e.target.value);
-  };
-
-  const handleSubmit = async (e) => {
-    e.preventDefault();
+  const handleSearch = async (event) => {
+    event.preventDefault();
     try {
-      const response = await axios.get(`/api/users/searchCourses?search=${query}`); // Adjust the endpoint as per your backend
+      const response = await axios.get(`http://localhost:5000/api/users/courses/search?query=${query}`);
       setResults(response.data);
     } catch (error) {
-      console.error('Error searching for courses:', error.message);
+      console.error('Error fetching search results', error);
     }
   };
 
+  const handleCourseClick = (courseId) => {
+    navigate(`/courses/${courseId}`);
+  };
+
   return (
-    <div>
-      <form onSubmit={handleSubmit}>
-        <input
-          type="text"
-          placeholder="Search for courses..."
+    <Container>
+      <form onSubmit={handleSearch} style={styles.form}>
+        <TextField
+          label="Search for courses..."
+          variant="outlined"
           value={query}
-          onChange={handleChange}
+          onChange={(e) => setQuery(e.target.value)}
+          InputProps={{
+            style: { color: 'white', borderColor: 'white' }, // Set color and border color to white
+            inputProps: { style: { color: 'white' } }, // Set color of input text to white
+            notchedOutline: { borderColor: 'white' }, // Set border color of the outline
+          }}
+          InputLabelProps={{
+            style: { color: 'white' }, // Set color of label text to white
+          }}
+          InputLabelComponent={(props) => (
+            <InputLabel {...props} variant="standard" shrink={true} style={{ color: 'white' }} />
+          )}
+          placeholder="Search for courses..." // Set placeholder text
+          style={styles.textField}
         />
-        <button type="submit">Search</button>
+        <Button type="submit" variant="contained" color="primary">
+          Search
+        </Button>
       </form>
-      <ul>
-        {results.map((course) => (
-          <li key={course._id}>
-            <h3>{course.title}</h3>
-            <p>{course.description}</p>
-            <p>Created By: {course.createdBy.name}</p>
-          </li>
-        ))}
-      </ul>
-    </div>
+      {results.length > 0 && (
+        <Grid container spacing={4}>
+          {results.map((course) => (
+            <Grid item key={course._id} xs={12} sm={6} md={4}>
+              <Card onClick={() => handleCourseClick(course._id)} style={styles.card}>
+                <CardMedia
+                  component="img"
+                  alt={course.title}
+                  height="140"
+                  image="https://via.placeholder.com/150"
+                  title={course.title}
+                />
+                <CardContent>
+                  <Typography gutterBottom variant="h5" component="div">
+                    {course.title}
+                  </Typography>
+                  <Typography variant="body2" color="textSecondary" component="p">
+                    {course.description}
+                  </Typography>
+                  <Typography variant="body2" color="textSecondary">
+                    By {course.createdBy?.name}
+                  </Typography>
+                </CardContent>
+              </Card>
+            </Grid>
+          ))}
+        </Grid>
+      )}
+    </Container>
   );
 };
 
