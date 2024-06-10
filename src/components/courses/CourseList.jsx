@@ -5,6 +5,8 @@ import { Card, CardContent, CardMedia, Typography, Container, Grid, Button} from
 
 const CourseList = () => {
   const [titles, setTitles] = useState([]);
+  const [Error, setError] = useState('');
+  const [loading, setLoading] = useState(true);
   const navigate = useNavigate(); 
   useEffect(() => {
     fetchCourseTitles();

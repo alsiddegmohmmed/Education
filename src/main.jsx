@@ -4,6 +4,7 @@ import { BrowserRouter as Router, Route, Routes } from 'react-router-dom';
 import { Provider } from 'react-redux';
 import store from './store.js';
 import CourseList from './components/courses/CourseList.jsx';
+import '../i18n.jsx'; // Ensure this import is present
 
 // Import your AuthProvider here
 import { AuthProvider } from './components/context/authContext.jsx'; // Replace 'your-auth-library' with the actual library you're using
