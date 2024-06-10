@@ -1,8 +1,7 @@
 import React, { useState, useContext } from 'react';
 import axios from 'axios';
 import { AuthContext } from '../context/authContext';
-import { useNavigate, Link } from 'react-router-dom';
-
+import { useNavigate } from 'react-router-dom';
 import { TextField, Button, Container, Typography, Box, Alert } from '@mui/material';
 
 const AddCourseForm = () => {
@@ -15,9 +14,11 @@ const AddCourseForm = () => {
   const { user } = useContext(AuthContext);
   const navigate = useNavigate(); 
 
-
   const handleFileChange = (e) => {
     setFiles(e.target.files);
+  };
+  const handleTeacherHomeRedirect = () => {
+    navigate('/teacher-dashboard');
   };
 
   const handleSubmit = async (e) => {
@@ -51,11 +52,6 @@ const AddCourseForm = () => {
       setSuccess('');
     }
   };
-
-  const handleTeacherHomeRedirect = () => {
-    navigate('/teacher-dashboard');
-  };
-
 
   return (
     <Container maxWidth="sm">
@@ -115,8 +111,8 @@ const AddCourseForm = () => {
         </Button>
       </Box>
       <Button variant="primary" onClick={handleTeacherHomeRedirect} className='me-2'>Go to home page </Button>
-
     </Container>
+
   );
 };
 
