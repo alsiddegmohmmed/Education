@@ -131,7 +131,7 @@ const getStudents = asyncHandler(async (req, res) => {
 // @route GET /api/users/getcoursetitles
 // @access Public
 const getCourseTitles = asyncHandler(async (req, res) => {
-    const courses = await Course.find({}).course.populate('createdBy').execPopulate();
+    const courses = await Course.find({}).populate('createdBy', 'name');
     ; // Only fetch the title field
     res.status(200).json(courses);
   });

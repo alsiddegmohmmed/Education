@@ -5,8 +5,10 @@ import { Card, CardContent, CardMedia, Typography, Container, Grid, Button} from
 
 const CourseList = () => {
   const [titles, setTitles] = useState([]);
-  const [Error, setError] = useState('');
+  const [error, setError] = useState(null);
   const [loading, setLoading] = useState(true);
+
+
   const navigate = useNavigate(); 
   useEffect(() => {
     fetchCourseTitles();
@@ -38,8 +40,8 @@ const CourseList = () => {
             <Card sx={{ height: '100%', display: 'flex', flexDirection: 'column' }}>
               <CardMedia
                 component="img"
-                image="https://via.placeholder.com/150"
-                alt="title image"
+                image={`http://localhost:5000/uploads/${title.images[0]}`} // Adjust the URL as per your backend's configuration
+                alt="Course Image"
                 sx={{ height: 140 }}
               />
               <CardContent sx={{ flexGrow: 1 }}>
@@ -50,7 +52,7 @@ const CourseList = () => {
                   {title.description}
                 </Typography>
                 <Typography variant="body2" color="text.secondary">
-                  By {title.createdBy.name}
+                  By {title.createdBy?.name}
                 </Typography>
               </CardContent>
             </Card>
@@ -62,6 +64,19 @@ const CourseList = () => {
 };
 
 export default CourseList;
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
