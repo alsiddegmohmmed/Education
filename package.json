@@ -4,11 +4,11 @@
   "version": "0.0.0",
   "type": "module",
   "scripts": {
-    "start": "node backend/server.js",
-    "server": "nodemon backend/server.js",
-    "client": "npm run dev --prefix frontend",
-    "dev": "vite",
-    "build": "vite build"
+    "dev": "concurrently \"npm run dev-frontend\" \"npm run dev-backend\"",
+    "dev-frontend": "vite",
+    "dev-backend": "nodemon backend/server.js",
+    "build": "vite build",
+    "start": "node backend/server.jsz"
   },
   "dependencies": {
     "@emotion/react": "^11.11.4",
@@ -19,7 +19,6 @@
     "bcryptjs": "^2.4.3",
     "bootstrap": "^5.3.3",
     "buffer": "^6.0.3",
-    "concurrently": "^8.2.2",
     "cookie-parser": "^1.4.6",
     "cors": "^2.8.5",
     "dotenv": "^16.4.5",
@@ -48,6 +47,7 @@
     "@types/react": "^18.2.66",
     "@types/react-dom": "^18.2.22",
     "@vitejs/plugin-react": "^4.2.1",
+    "concurrently": "^8.2.2",
     "eslint": "^8.57.0",
     "eslint-plugin-react": "^7.34.1",
     "eslint-plugin-react-hooks": "^4.6.0",
