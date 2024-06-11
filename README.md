@@ -87,17 +87,4 @@ This educational website provides a platform for students and teachers to intera
 - **User Management:** Admins can view, add, and delete users (students and teachers).
 - **Course Management:** Admins can view all courses uploaded by teachers.
 
-## Running the Application
 
-To run both the student and admin applications simultaneously, different ports should be used.
-
-### Step 1: Change Port for Admin Application
-
-In the `server.js` of the admin application, set a different port:
-
-```javascript
-const express = require('express');
-const app = express();
-const PORT = process.env.PORT || 5001;
-
-app.listen(PORT, () => console.log(`Admin app running on port ${PORT}`));
