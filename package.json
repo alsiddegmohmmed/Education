@@ -4,11 +4,12 @@
   "version": "0.0.0",
   "type": "module",
   "scripts": {
+   "start": "node backend/server.js",
     "dev": "concurrently \"npm run dev-frontend\" \"npm run dev-backend\"",
     "dev-frontend": "vite",
     "dev-backend": "nodemon backend/server.js",
-    "build": "vite build",
-    "start": "node backend/server.jsz"
+    "build": "vite build"
+    "client": "npm run dev --prefix frontend"
   },
   "dependencies": {
     "@emotion/react": "^11.11.4",
