@@ -133,18 +133,52 @@ const updateTeacherProfile = asyncHandler(async (req, res) => {
             user.password = req.body.password;
         }
 
+        // Update additional fields
+        user.phone = req.body.phone || user.phone;
+        user.website = req.body.website || user.website;
+        user.dateOfBirth = req.body.dateOfBirth || user.dateOfBirth;
+        user.profilePicture = req.body.profilePicture || user.profilePicture;
+        user.biography = req.body.biography || user.biography;
+        user.gender = req.body.gender || user.gender;
+        user.subjectsTaught = req.body.subjectsTaught || user.subjectsTaught;
+        user.yearsOfExperience = req.body.yearsOfExperience || user.yearsOfExperience;
+        user.educationLevel = req.body.educationLevel || user.educationLevel;
+        user.certifications = req.body.certifications || user.certifications;
+        user.address = req.body.address || user.address;
+        user.availability = req.body.availability || user.availability;
+        user.preferredLanguage = req.body.preferredLanguage || user.preferredLanguage;
+        user.favoriteColor = req.body.favoriteColor || user.favoriteColor;
+        user.selfRating = req.body.selfRating || user.selfRating;
+
         const updatedTeacher = await user.save();
         res.status(200).json({
             _id: updatedTeacher._id,
             name: updatedTeacher.name,
             email: updatedTeacher.email,
             role: updatedTeacher.role,
+            phone: updatedTeacher.phone,
+            website: updatedTeacher.website,
+            dateOfBirth: updatedTeacher.dateOfBirth,
+            profilePicture: updatedTeacher.profilePicture,
+            biography: updatedTeacher.biography,
+            gender: updatedTeacher.gender,
+            subjectsTaught: updatedTeacher.subjectsTaught,
+            yearsOfExperience: updatedTeacher.yearsOfExperience,
+            educationLevel: updatedTeacher.educationLevel,
+            certifications: updatedTeacher.certifications,
+            address: updatedTeacher.address,
+            availability: updatedTeacher.availability,
+            preferredLanguage: updatedTeacher.preferredLanguage,
+            favoriteColor: updatedTeacher.favoriteColor,
+            selfRating: updatedTeacher.selfRating,
         });
     } else {
         res.status(404);
         throw new Error('User not found');
     }
 });
+
+
 
 // @desc Get all users
 // @route GET /api/users

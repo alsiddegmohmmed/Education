@@ -1,7 +1,7 @@
 import mongoose from 'mongoose';
 import bcrypt from 'bcryptjs';
 
-const userSchema = new mongoose.Schema(
+const userSchema = mongoose.Schema(
     {
         name: {
             type: String,
@@ -20,6 +20,56 @@ const userSchema = new mongoose.Schema(
             type: String,
             enum: ['student', 'teacher', 'admin'],
             required: true,
+        },
+        phone: {
+            type: String,
+        },
+        website: {
+            type: String,
+        },
+        dateOfBirth: {
+            type: Date,
+        },
+        profilePicture: {
+            type: String,
+        },
+        biography: {
+            type: String,
+        },
+        gender: {
+            type: String,
+            enum: ['male', 'female', 'other'],
+        },
+        subjectsTaught: {
+            type: [String],
+        },
+        yearsOfExperience: {
+            type: Number,
+            min: 0,
+        },
+        educationLevel: {
+            type: String,
+            enum: ['bachelors', 'masters', 'phd', 'other'],
+        },
+        certifications: {
+            type: String,
+        },
+        address: {
+            type: String,
+        },
+        availability: {
+            type: Date,
+        },
+        preferredLanguage: {
+            type: String,
+        },
+        favoriteColor: {
+            type: String,
+        },
+        selfRating: {
+            type: Number,
+            min: 1,
+            max: 5,
         },
     },
     {
@@ -40,6 +90,6 @@ userSchema.methods.matchPassword = async function (enteredPassword) {
     return await bcrypt.compare(enteredPassword, this.password);
 };
 
-const User = mongoose.model('users', userSchema);
+const User = mongoose.model('User', userSchema);
 
 export default User;
