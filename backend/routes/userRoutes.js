@@ -11,11 +11,13 @@ import {
     updateUserProfile,
     getUsers,
     updateUser,
+    updateTeacher,
     deleteUser,
     createUser,
     getStudents,
     addCourse,
     getCourseTitles,
+    updateTeacherProfile,
     searchCourses,
 } from "../controllers/userController.js";
 
@@ -34,6 +36,10 @@ router.post('/logout', logoutUser);
 router.route('/profile')
   .get(protect, getUserProfile)
   .put(protect, updateUserProfile);
+
+router.route('/teacher/profile')
+  .get(protect, getUserProfile)
+  .put(protect, updateTeacherProfile);
 
 router.route('/teacher-dashboard')
   .get(protect, teacher, (req, res) => res.send('Teacher Dashboard'));

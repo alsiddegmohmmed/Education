@@ -1,7 +1,7 @@
 import { Form, Button, Container } from 'react-bootstrap';
 import FormContainer from './FormContainer';
 import Loader from '../Loader';
-import { useUpdateUserMutation } from '../../slices/usersApiSlice';
+import { useUpdateTeacherMutation } from '../../slices/usersApiSlice';
 import { useState, useEffect } from "react";
 import { Link , useNavigate} from "react-router-dom";
 import { useDispatch, useSelector } from 'react-redux'
@@ -18,7 +18,7 @@ const TeacherProfile = () => {
 
   const { userInfo } = useSelector((state) => state.auth);
 
-  const [updateProfile, { isLoading }] = useUpdateUserMutation();
+  const [updateProfile, { isLoading }] = useUpdateTeacherMutation();
 
   useEffect(() => {
     setName(userInfo.name);

@@ -114,6 +114,38 @@ const updateUserProfile = asyncHandler(async (req, res) => {
     }
 });
 
+const updateTeacherProfile = asyncHandler(async (req, res) => {
+    const user = await User.findById(req.user._id);
+
+    if (user) {
+        user.name = req.body.name || user.name;
+        const newEmail = req.body.email;
+        if (newEmail && newEmail !== user.email) {
+            // Check if the new email already exists
+            const existingUser = await User.findOne({ email: newEmail });
+            if (existingUser !== user.email) {
+                res.status(400);
+                throw new Error('Email already exists');
+            }
+            user.email = newEmail;
+        }
+        if (req.body.password) {
+            user.password = req.body.password;
+        }
+
+        const updatedTeacher = await user.save();
+        res.status(200).json({
+            _id: updatedTeacher._id,
+            name: updatedTeacher.name,
+            email: updatedTeacher.email,
+            role: updatedTeacher.role,
+        });
+    } else {
+        res.status(404);
+        throw new Error('User not found');
+    }
+});
+
 // @desc Get all users
 // @route GET /api/users
 // @access Private/Teacher
@@ -178,6 +210,22 @@ const updateUser = asyncHandler(async (req, res) => {
 
         const updatedUser = await user.save();
         res.status(200).json(updatedUser);
+    } else {
+        res.status(404);
+        throw new Error('User not found');
+    }
+});
+
+const updateTeacher = asyncHandler(async (req, res) => {
+    const user = await User.findById(req.params.id);
+
+    if (user) {
+        user.name = req.body.name || user.name;
+        user.email = req.body.email || user.email;
+        user.role = req.body.role || user.role;
+
+        const updatedTeacher = await user.save();
+        res.status(200).json(updatedTeacher);
     } else {
         res.status(404);
         throw new Error('User not found');
@@ -258,9 +306,11 @@ export {
     logoutUser,
     getUserProfile,
     updateUserProfile,
+    updateTeacherProfile,
     getUsers,
     createUser,
     updateUser,
+    updateTeacher,
     deleteUser,
     getStudents, 
     addCourse, 
