@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
-import { Table, Button, Card,  Row, Col } from 'react-bootstrap';
+import { Table, Button, Card, Container, Row, Col } from 'react-bootstrap';
 import { logout } from '../../slices/authSlice';
 import { useLogoutMutation } from '../../slices/usersApiSlice';
 import { useNavigate, Link } from 'react-router-dom';
@@ -9,9 +9,9 @@ import Loader from '../Loader.jsx';
 import Message from './Message.jsx';
 import axios from 'axios';
 import Header from '../header/Header.jsx';
-import { Container } from 'reactstrap';
 import Sidebar from '../sidebar/Sidebar.jsx';
-
+import { Dialog, DialogActions, DialogContent, DialogTitle, Box, IconButton, Typography } from '@mui/material';
+import { Delete as DeleteIcon } from '@mui/icons-material';
 
 const TeacherDashboard = () => {
   const [users, setUsers] = useState([]);
@@ -19,15 +19,15 @@ const TeacherDashboard = () => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
   const { userInfo } = useSelector((state) => state.auth);
-  const [logoutApiCall] = useLogoutMutation(); 
-  const dispatch = useDispatch(); 
-  const navigate = useNavigate(); 
+  const [logoutApiCall] = useLogoutMutation();
+  const dispatch = useDispatch();
+  const navigate = useNavigate();
   const [showModal, setShowModal] = useState(false);
 
   const logoutHandler = async () => {
     try {
-      await logoutApiCall().unwrap(); 
-      dispatch(logout()); 
+      await logoutApiCall().unwrap();
+      dispatch(logout());
       navigate('/login');
     } catch (err) {
       console.log(err);
@@ -63,7 +63,7 @@ const TeacherDashboard = () => {
   };
 
   const deleteUser = (id, name) => {
-    const token = localStorage.getItem('token'); // Adjust this based on how you store the token
+    const token = localStorage.getItem('token');
 
     if (window.confirm(`Are you sure you want to delete ${name}`)) {
       axios.delete(`/api/users/${id}`, {
@@ -71,19 +71,19 @@ const TeacherDashboard = () => {
           Authorization: `Bearer ${token}`
         }
       })
-      .then(response => {
-        alert(response.data.message);
-        getAllUsers();
-      })
-      .catch(error => {
-        console.error('There was an error deleting the user!', error);
-      });
+        .then(response => {
+          alert(response.data.message);
+          getAllUsers();
+        })
+        .catch(error => {
+          console.error('There was an error deleting the user!', error);
+        });
     }
   };
 
   const handleShowModal = () => setShowModal(true);
   const handleCloseModal = () => setShowModal(false);
-  
+
   const handleAddUser = (newUser) => {
     setUsers([...users, newUser]);
     handleCloseModal();
@@ -122,34 +122,42 @@ const TeacherDashboard = () => {
                       <Link to='/teacher-profile'><Button variant='primary'>Edit Profile</Button></Link>
                     </div>
                   </div>
-                  <Table striped bordered hover responsive className="mt-4">
-                    <thead>
-                      <tr>
-                        <th>Name</th>
-                        <th>Email</th>
-                        <th>Role</th>
-                        <th></th>
-                      </tr>
-                    </thead>
-                    <tbody>
-                      {students.map(student => (
-                        <tr key={student._id}>
-                          <td>{student.name}</td>
-                          <td>{student.email}</td>
-                          <td>{student.role}</td>
-                          <td>
-                            <Button
-                              variant="danger"
-                              onClick={() => deleteUser(student._id, student.name)}
-                            >
-                              Delete
-                            </Button>
-                          </td>
+                  {loading ? (
+                    <Loader />
+                  ) : error ? (
+                    <Message variant="danger">{error}</Message>
+                  ) : (
+                    <Table striped bordered hover responsive className="mt-4">
+                      <thead>
+                        <tr>
+                          <th>Name</th>
+                          <th>Email</th>
+                          <th>Role</th>
+                          <th></th>
                         </tr>
-                      ))}
-                    </tbody>
-                  </Table>
+                      </thead>
+                      <tbody>
+                        {students.map(student => (
+                          <tr key={student._id}>
+                            <td>{student.name}</td>
+                            <td>{student.email}</td>
+                            <td>{student.role}</td>
+                            <td>
+                              <IconButton
+                                color="error"
+                                onClick={() => deleteUser(student._id, student.name)}
+                              >
+                                <DeleteIcon />
+                              </IconButton>
+                            </td>
+                          </tr>
+                        ))}
+                      </tbody>
+                    </Table>
+                  )}
+                  
                   <ModalForm show={showModal} handleClose={handleCloseModal} handleSubmit={handleAddUser} />
+
                 </Card.Body>
               </Card>
             </Col>
