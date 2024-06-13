@@ -1,94 +1,80 @@
-import { Form, Button, Container } from 'react-bootstrap';
-import FormContainer from './FormContainer';
-import Loader from '../Loader';
+import React, { useState, useEffect, useRef } from 'react';
+import { useDispatch, useSelector } from 'react-redux';
 import { useUpdateTeacherMutation } from '../../slices/usersApiSlice';
-import { useState, useEffect } from "react";
-import { Link , useNavigate} from "react-router-dom";
-import { useDispatch, useSelector } from 'react-redux'
+import { setCredentials } from '../../slices/authSlice';
+import { Container, Grid, TextField, Button, Typography, MenuItem } from '@mui/material';
 import { ToastContainer, toast } from 'react-toastify';
-import { setCredentials } from "../../slices/authSlice";
+import { Link } from 'react-router-dom';
+import Loader from '../Loader';
 
 const TeacherProfile = () => {
-  const [email, setEmail] = useState('');
-  const [name, setName] = useState('');
-  const [password, setPassword] = useState('');
-  const [confirmPassword, setConfirmPassword] = useState('');
+  const [formState, setFormState] = useState({
+    name: '',
+    email: '',
+    password: '',
+    confirmPassword: '',
+    phone: '',
+    website: '',
+    dateOfBirth: '',
+    profilePicture: '',
+    biography: '',
+    gender: '',
+    subjectsTaught: '',
+    yearsOfExperience: '',
+    educationLevel: '',
+    certifications: '',
+    address: '',
+    availability: '',
+    preferredLanguage: '',
+    favoriteColor: '',
+    selfRating: ''
+  });
 
-  // Additional state fields
-  const [phone, setPhone] = useState('');
-  const [website, setWebsite] = useState('');
-  const [dateOfBirth, setDateOfBirth] = useState('');
-  const [profilePicture, setProfilePicture] = useState('');
-  const [biography, setBiography] = useState('');
-  const [gender, setGender] = useState('');
-  const [subjectsTaught, setSubjectsTaught] = useState('');
-  const [yearsOfExperience, setYearsOfExperience] = useState('');
-  const [educationLevel, setEducationLevel] = useState('');
-  const [certifications, setCertifications] = useState('');
-  const [address, setAddress] = useState('');
-  const [availability, setAvailability] = useState('');
-  const [preferredLanguage, setPreferredLanguage] = useState('');
-  const [favoriteColor, setFavoriteColor] = useState('');
-  const [selfRating, setSelfRating] = useState('');
-
+  const formInitialized = useRef(false);
   const dispatch = useDispatch();
-
   const { userInfo } = useSelector((state) => state.auth);
-
   const [updateProfile, { isLoading }] = useUpdateTeacherMutation();
 
   useEffect(() => {
-    setName(userInfo.name);
-    setEmail(userInfo.email);
-
-    // Initialize additional fields
-    setPhone(userInfo.phone || '');
-    setWebsite(userInfo.website || '');
-    setDateOfBirth(userInfo.dateOfBirth ? userInfo.dateOfBirth.split('T')[0] : '');
-    setProfilePicture(userInfo.profilePicture || '');
-    setBiography(userInfo.biography || '');
-    setGender(userInfo.gender || '');
-    setSubjectsTaught(userInfo.subjectsTaught || '');
-    setYearsOfExperience(userInfo.yearsOfExperience || '');
-    setEducationLevel(userInfo.educationLevel || '');
-    setCertifications(userInfo.certifications || '');
-    setAddress(userInfo.address || '');
-    setAvailability(userInfo.availability ? userInfo.availability.split('T')[0] : '');
-    setPreferredLanguage(userInfo.preferredLanguage || '');
-    setFavoriteColor(userInfo.favoriteColor || '');
-    setSelfRating(userInfo.selfRating || '');
+    if (!formInitialized.current) {
+      setFormState({
+        name: userInfo.name || '',
+        email: userInfo.email || '',
+        phone: userInfo.phone || '',
+        website: userInfo.website || '',
+        dateOfBirth: userInfo.dateOfBirth ? userInfo.dateOfBirth.split('T')[0] : '',
+        profilePicture: userInfo.profilePicture || '',
+        biography: userInfo.biography || '',
+        gender: userInfo.gender || '',
+        subjectsTaught: userInfo.subjectsTaught || '',
+        yearsOfExperience: userInfo.yearsOfExperience || '',
+        educationLevel: userInfo.educationLevel || '',
+        certifications: userInfo.certifications || '',
+        address: userInfo.address || '',
+        availability: userInfo.availability ? userInfo.availability.split('T')[0] : '',
+        preferredLanguage: userInfo.preferredLanguage || '',
+        favoriteColor: userInfo.favoriteColor || '',
+        selfRating: userInfo.selfRating || ''
+      });
+      formInitialized.current = true;
+    }
   }, [userInfo]);
+
+  const handleChange = (e) => {
+    const { name, value } = e.target;
+    setFormState({ ...formState, [name]: value });
+  };
 
   const submitHandler = async (e) => {
     e.preventDefault();
-    if (password !== confirmPassword) {
+    if (formState.password !== formState.confirmPassword) {
       toast.error('Passwords do not match');
     } else {
       try {
-        const res = await updateProfile({
-          _id: userInfo._id,
-          name, 
-          email,
-          password,
-          phone,
-          website,
-          dateOfBirth,
-          profilePicture,
-          biography,
-          gender,
-          subjectsTaught,
-          yearsOfExperience,
-          educationLevel,
-          certifications,
-          address,
-          availability,
-          preferredLanguage,
-          favoriteColor,
-          selfRating
-        }).unwrap();
-        console.log(res);
+        const res = await updateProfile({ _id: userInfo._id, ...formState }).unwrap();
         dispatch(setCredentials(res));
         toast.success('Profile updated successfully');
+        console.log('Profile updated:', res);
       } catch (err) {
         toast.error(err?.data?.message || err.error);
       }
@@ -98,207 +84,253 @@ const TeacherProfile = () => {
   return (
     <>
       <ToastContainer />
-      <Container className='my-2'>
-        <FormContainer>
-          <h1>Update Profile</h1>
-          <Form onSubmit={submitHandler}>
-            <Form.Group className='my-2' controlId='name'>
-              <Form.Label>Name</Form.Label>
-              <Form.Control
-                type='name'
-                placeholder='Enter name'
-                value={name}
-                onChange={(e) => setName(e.target.value)}
-              ></Form.Control>
-            </Form.Group>
-            <Form.Group className='my-2' controlId='email'>
-              <Form.Label>Email Address</Form.Label>
-              <Form.Control
-                type='email'
-                placeholder='Enter email'
-                value={email}
-                onChange={(e) => setEmail(e.target.value)}
-              ></Form.Control>
-            </Form.Group>
-            <Form.Group className='my-2' controlId='password'>
-              <Form.Label>Password</Form.Label>
-              <Form.Control
-                type='password'
-                placeholder='Enter password'
-                value={password}
-                onChange={(e) => setPassword(e.target.value)}
-              ></Form.Control>
-            </Form.Group>
-            <Form.Group className='my-2' controlId='confirmPassword'>
-              <Form.Label>Confirm Password</Form.Label>
-              <Form.Control
-                type='password'
-                placeholder='Confirm password'
-                value={confirmPassword}
-                onChange={(e) => setConfirmPassword(e.target.value)}
-              ></Form.Control>
-            </Form.Group>
-
+      <Container>
+        <Typography variant="h4" component="h1" gutterBottom>
+          Update Profile
+        </Typography>
+        <form onSubmit={submitHandler}>
+          <Grid container spacing={3}>
+            <Grid item xs={12} sm={6}>
+              <TextField
+                fullWidth
+                label="Name"
+                name="name"
+                value={formState.name}
+                onChange={handleChange}
+                variant="outlined"
+              />
+            </Grid>
+            <Grid item xs={12} sm={6}>
+              <TextField
+                fullWidth
+                label="Email Address"
+                name="email"
+                value={formState.email}
+                onChange={handleChange}
+                variant="outlined"
+              />
+            </Grid>
+            <Grid item xs={12} sm={6}>
+              <TextField
+                fullWidth
+                label="Password"
+                type="password"
+                name="password"
+                value={formState.password}
+                onChange={handleChange}
+                variant="outlined"
+              />
+            </Grid>
+            <Grid item xs={12} sm={6}>
+              <TextField
+                fullWidth
+                label="Confirm Password"
+                type="password"
+                name="confirmPassword"
+                value={formState.confirmPassword}
+                onChange={handleChange}
+                variant="outlined"
+              />
+            </Grid>
             {/* Additional Fields */}
-            <Form.Group className='my-2' controlId='phone'>
-              <Form.Label>Phone</Form.Label>
-              <Form.Control
-                type='text'
-                placeholder='Enter phone'
-                value={phone}
-                onChange={(e) => setPhone(e.target.value)}
-              ></Form.Control>
-            </Form.Group>
-            <Form.Group className='my-2' controlId='website'>
-              <Form.Label>Website</Form.Label>
-              <Form.Control
-                type='text'
-                placeholder='Enter website'
-                value={website}
-                onChange={(e) => setWebsite(e.target.value)}
-              ></Form.Control>
-            </Form.Group>
-            <Form.Group className='my-2' controlId='dateOfBirth'>
-              <Form.Label>Date of Birth</Form.Label>
-              <Form.Control
-                type='date'
-                value={dateOfBirth}
-                onChange={(e) => setDateOfBirth(e.target.value)}
-              ></Form.Control>
-            </Form.Group>
-            <Form.Group className='my-2' controlId='profilePicture'>
-              <Form.Label>Profile Picture</Form.Label>
-              <Form.Control
-                type='text'
-                placeholder='Enter profile picture URL'
-                value={profilePicture}
-                onChange={(e) => setProfilePicture(e.target.value)}
-              ></Form.Control>
-            </Form.Group>
-            <Form.Group className='my-2' controlId='biography'>
-              <Form.Label>Biography</Form.Label>
-              <Form.Control
-                as='textarea'
-                rows={3}
-                placeholder='Enter biography'
-                value={biography}
-                onChange={(e) => setBiography(e.target.value)}
-              ></Form.Control>
-            </Form.Group>
-            <Form.Group className='my-2' controlId='gender'>
-              <Form.Label>Gender</Form.Label>
-              <Form.Control
-                as='select'
-                value={gender}
-                onChange={(e) => setGender(e.target.value)}
-              >
-                <option value=''>Select...</option>
-                <option value='male'>Male</option>
-                <option value='female'>Female</option>
-                <option value='other'>Other</option>
-              </Form.Control>
-            </Form.Group>
-            <Form.Group className='my-2' controlId='subjectsTaught'>
-              <Form.Label>Subjects Taught</Form.Label>
-              <Form.Control
-                type='text'
-                placeholder='Enter subjects taught'
-                value={subjectsTaught}
-                onChange={(e) => setSubjectsTaught(e.target.value)}
-              ></Form.Control>
-            </Form.Group>
-            <Form.Group className='my-2' controlId='yearsOfExperience'>
-              <Form.Label>Years of Experience</Form.Label>
-              <Form.Control
-                type='number'
-                placeholder='Enter years of experience'
-                value={yearsOfExperience}
-                onChange={(e) => setYearsOfExperience(e.target.value)}
-              ></Form.Control>
-            </Form.Group>
-            <Form.Group className='my-2' controlId='educationLevel'>
-              <Form.Label>Education Level</Form.Label>
-              <Form.Control
-                as='select'
-                value={educationLevel}
-                onChange={(e) => setEducationLevel(e.target.value)}
-              >
-                <option value=''>Select...</option>
-                <option value='bachelors'>Bachelors</option>
-                <option value='masters'>Masters</option>
-                <option value='phd'>PhD</option>
-                <option value='other'>Other</option>
-              </Form.Control>
-            </Form.Group>
-            <Form.Group className='my-2' controlId='certifications'>
-              <Form.Label>Certifications</Form.Label>
-              <Form.Control
-                type='text'
-                placeholder='Enter certifications'
-                value={certifications}
-                onChange={(e) => setCertifications(e.target.value)}
-              ></Form.Control>
-            </Form.Group>
-            <Form.Group className='my-2' controlId='address'>
-              <Form.Label>Address</Form.Label>
-              <Form.Control
-                type='text'
-                placeholder='Enter address'
-                value={address}
-                onChange={(e) => setAddress(e.target.value)}
-              ></Form.Control>
-            </Form.Group>
-            <Form.Group className='my-2' controlId='availability'>
-              <Form.Label>Availability</Form.Label>
-              <Form.Control
-                type='date'
-                value={availability}
-                onChange={(e) => setAvailability(e.target.value)}
-              ></Form.Control>
-            </Form.Group>
-            <Form.Group className='my-2' controlId='preferredLanguage'>
-              <Form.Label>Preferred Language</Form.Label>
-              <Form.Control
-                type='text'
-                placeholder='Enter preferred language'
-                value={preferredLanguage}
-                onChange={(e) => setPreferredLanguage(e.target.value)}
-              ></Form.Control>
-            </Form.Group>
-            <Form.Group className='my-2' controlId='favoriteColor'>
-              <Form.Label>Favorite Color</Form.Label>
-              <Form.Control
-                type='text'
-                placeholder='Enter favorite color'
-                value={favoriteColor}
-                onChange={(e) => setFavoriteColor(e.target.value)}
-              ></Form.Control>
-            </Form.Group>
-            <Form.Group className='my-2' controlId='selfRating'>
-              <Form.Label>Self Rating</Form.Label>
-              <Form.Control
-                type='number'
-                placeholder='Enter self rating'
-                value={selfRating}
-                onChange={(e) => setSelfRating(e.target.value)}
-                min={1}
-                max={5}
-              ></Form.Control>
-            </Form.Group>
-
-            <Button type='submit' variant='primary' className='mt-3'>
-              Update
-            </Button>
-
-            <Button  variant='primary' className='mt-3'>
-              <Link to="/teacher-dashboard" > go back </Link> </Button>
-
-            {isLoading && <Loader />}
-          </Form>
-        </FormContainer>
-      </Container>
-    </>
-  );
-};
-
-export default TeacherProfile;
+            <Grid item xs={12} sm={6}>
+              <TextField
+                fullWidth
+                label="Phone"
+                name="phone"
+                value={formState.phone}
+                onChange={handleChange}
+                variant="outlined"
+              />
+            </Grid>
+            <Grid item xs={12} sm={6}>
+              <TextField
+                fullWidth
+                label="Website"
+                name="website"
+                value={formState.website}
+                onChange={handleChange}
+                variant="outlined"
+              />
+            </Grid>
+            <Grid item xs={12} sm={6}>
+              <TextField
+                fullWidth
+                label="Date of Birth"
+                type="date"
+                name="dateOfBirth"
+                value={formState.dateOfBirth}
+                onChange={handleChange}
+                variant="outlined"
+                InputLabelProps={{
+                  shrink: true,
+                }}
+              />
+            </Grid>
+            <Grid item xs={12} sm={6}>
+              <TextField
+                fullWidth
+                label="Profile Picture"
+                name="profilePicture"
+                value={formState.profilePicture}
+                onChange={handleChange}
+                variant="outlined"
+              />
+            </Grid>
+            <Grid item xs={12}>
+              <TextField
+                fullWidth
+                label="Biography"
+                name="biography"
+                value={formState.biography}
+                onChange={handleChange}
+                variant="outlined"
+                multiline
+                rows={4}
+                />
+              </Grid>
+              <Grid item xs={12} sm={6}>
+                <TextField
+                  fullWidth
+                  label="Gender"
+                  name="gender"
+                  value={formState.gender}
+                  onChange={handleChange}
+                  select
+                  variant="outlined"
+                >
+                  <MenuItem value="male">Male</MenuItem>
+                  <MenuItem value="female">Female</MenuItem>
+                  <MenuItem value="other">Other</MenuItem>
+                </TextField>
+              </Grid>
+              <Grid item xs={12} sm={6}>
+                <TextField
+                  fullWidth
+                  label="Subjects Taught"
+                  name="subjectsTaught"
+                  value={formState.subjectsTaught}
+                  onChange={handleChange}
+                  variant="outlined"
+                />
+              </Grid>
+              <Grid item xs={12} sm={6}>
+                <TextField
+                  fullWidth
+                  label="Years of Experience"
+                  type="number"
+                  name="yearsOfExperience"
+                  value={formState.yearsOfExperience}
+                  onChange={handleChange}
+                  variant="outlined"
+                  InputProps={{ inputProps: { min: 0 } }}
+                />
+              </Grid>
+              <Grid item xs={12} sm={6}>
+                <TextField
+                  fullWidth
+                  label="Education Level"
+                  name="educationLevel"
+                  value={formState.educationLevel}
+                  onChange={handleChange}
+                  select
+                  variant="outlined"
+                >
+                  <MenuItem value="bachelors">Bachelors</MenuItem>
+                  <MenuItem value="masters">Masters</MenuItem>
+                  <MenuItem value="phd">PhD</MenuItem>
+                  <MenuItem value="other">Other</MenuItem>
+                </TextField>
+              </Grid>
+              <Grid item xs={12} sm={6}>
+                <TextField
+                  fullWidth
+                  label="Certifications"
+                  name="certifications"
+                  value={formState.certifications}
+                  onChange={handleChange}
+                  variant="outlined"
+                />
+              </Grid>
+              <Grid item xs={12} sm={6}>
+                <TextField
+                  fullWidth
+                  label="Address"
+                  name="address"
+                  value={formState.address}
+                  onChange={handleChange}
+                  variant="outlined"
+                />
+              </Grid>
+              <Grid item xs={12} sm={6}>
+                <TextField
+                  fullWidth
+                  label="Availability"
+                  type="date"
+                  name="availability"
+                  value={formState.availability}
+                  onChange={handleChange}
+                  variant="outlined"
+                  InputLabelProps={{
+                    shrink: true,
+                  }}
+                />
+              </Grid>
+              <Grid item xs={12} sm={6}>
+                <TextField
+                  fullWidth
+                  label="Preferred Language"
+                  name="preferredLanguage"
+                  value={formState.preferredLanguage}
+                  onChange={handleChange}
+                  variant="outlined"
+                />
+              </Grid>
+              <Grid item xs={12} sm={6}>
+                <TextField
+                  fullWidth
+                  label="Favorite Color"
+                  name="favoriteColor"
+                  value={formState.favoriteColor}
+                  onChange={handleChange}
+                  variant="outlined"
+                />
+              </Grid>
+              <Grid item xs={12} sm={6}>
+                <TextField
+                  fullWidth
+                  label="Self Rating"
+                  type="number"
+                  name="selfRating"
+                  value={formState.selfRating}
+                  onChange={handleChange}
+                  variant="outlined"
+                  InputProps={{ inputProps: { min: 1, max: 5 } }}
+                />
+              </Grid>
+              <Grid item xs={12}>
+                <Button type="submit" variant="contained" color="primary" fullWidth>
+                  Update
+                </Button>
+              </Grid>
+              <Grid item xs={12}>
+                <Button variant="contained" color="primary" fullWidth>
+                  <Link to="/teacher-dashboard" style={{ color: 'white', textDecoration: 'none' }}>
+                    Go back
+                  </Link>
+                </Button>
+              </Grid>
+              {isLoading && (
+                <Grid item xs={12}>
+                  <Loader />
+                </Grid>
+              )}
+            </Grid>
+          </form>
+        </Container>
+      </>
+    );
+  };
+  
+  export default TeacherProfile;
+  

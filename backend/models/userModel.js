@@ -57,20 +57,10 @@ const userSchema = mongoose.Schema(
         address: {
             type: String,
         },
-        availability: {
-            type: Date,
-        },
         preferredLanguage: {
             type: String,
         },
-        favoriteColor: {
-            type: String,
-        },
-        selfRating: {
-            type: Number,
-            min: 1,
-            max: 5,
-        },
+      
     },
     {
         timestamps: true,
