@@ -1,197 +1,250 @@
 import { useState, useEffect } from "react";
-import { Link, useNavigate } from "react-router-dom";
+import { Link as RouterLink, useNavigate } from "react-router-dom";
 import { useDispatch, useSelector } from 'react-redux';
-import { Form, Button, Row, Col } from 'react-bootstrap';
-import FormContainer from './FormContainer';
-import Loader from "../Loader";
+import Avatar from '@mui/material/Avatar';
+import Button from '@mui/material/Button';
+import CssBaseline from '@mui/material/CssBaseline';
+import TextField from '@mui/material/TextField';
+import FormControlLabel from '@mui/material/FormControlLabel';
+import Checkbox from '@mui/material/Checkbox';
+import Link from '@mui/material/Link';
+import Grid from '@mui/material/Grid';
+import Box from '@mui/material/Box';
+import LockOutlinedIcon from '@mui/icons-material/LockOutlined';
+import Typography from '@mui/material/Typography';
+import Container from '@mui/material/Container';
+import { createTheme, ThemeProvider } from '@mui/material/styles';
 import { useRegisterMutation } from "../../slices/usersApiSlice";
 import { setCredentials } from "../../slices/authSlice";
-import React from 'react';
-// src/screens/RegisterScreen.js (or wherever you need it)
+import Loader from "../Loader";
 import Message from '../dashboard/Message';
 
+const defaultTheme = createTheme();
 
 const RegisterScreen = () => {
-    const [name, setName] = useState(''); 
-    const [email, setEmail] = useState(''); 
-    const [password, setPassword] = useState(''); 
-    const [confirmPassword, setConfirmPassword] = useState(''); 
-    const [role, setRole] = useState(''); 
-    const [nameError, setNameError] = useState('');
-    const [emailError, setEmailError] = useState('');
-    const [passwordError, setPasswordError] = useState('');
-    const [confirmPasswordError, setConfirmPasswordError] = useState('');
-    const [roleError, setRoleError] = useState('');
+  const [name, setName] = useState(''); 
+  const [email, setEmail] = useState(''); 
+  const [password, setPassword] = useState(''); 
+  const [confirmPassword, setConfirmPassword] = useState(''); 
+  const [role, setRole] = useState(''); 
+  const [nameError, setNameError] = useState('');
+  const [emailError, setEmailError] = useState('');
+  const [passwordError, setPasswordError] = useState('');
+  const [confirmPasswordError, setConfirmPasswordError] = useState('');
+  const [roleError, setRoleError] = useState('');
 
-    const navigate = useNavigate(); 
-    const dispatch = useDispatch(); 
-    const { userInfo } = useSelector((state) => state.auth); 
-    const [register, { isLoading }] = useRegisterMutation(); 
+  const navigate = useNavigate(); 
+  const dispatch = useDispatch(); 
+  const { userInfo } = useSelector((state) => state.auth); 
+  const [register, { isLoading }] = useRegisterMutation(); 
 
-    useEffect(() => {
-        if (userInfo) {
-            navigate('/');
-        }
-    }, [navigate, userInfo]);
+  useEffect(() => {
+    if (userInfo) {
+      if (role === 'teacher') {
+        navigate('/teacher-dashboard')
+      } else if (role === 'student') {
+        navigate('/home')
+      }
+    }
+  }, [navigate, userInfo]);
 
-    const validateEmail = (email) => {
-        const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-        return emailRegex.test(email);
-    };
+  const validateEmail = (email) => {
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    return emailRegex.test(email);
+  };
 
-    const handleEmailChange = (e) => {
-        const newEmail = e.target.value;
-        setEmail(newEmail);
+  const handleEmailChange = (e) => {
+    const newEmail = e.target.value;
+    setEmail(newEmail);
 
-        if (newEmail && !validateEmail(newEmail)) {
-            setEmailError('Please enter a valid email address.');
+    if (newEmail && !validateEmail(newEmail)) {
+      setEmailError('Please enter a valid email address.');
+    } else {
+      setEmailError('');
+    }
+  };
+
+  const submitHandler = async (e) => {
+    e.preventDefault();
+    let isValid = true;
+
+    if (!name) {
+      setNameError('Name is required.');
+      isValid = false;
+    } else {
+      setNameError('');
+    }
+
+    if (!email) {
+      setEmailError('Email is required.');
+      isValid = false;
+    } else if (!validateEmail(email)) {
+      setEmailError('Please enter a valid email address.');
+      isValid = false;
+    } else {
+      setEmailError('');
+    }
+
+    if (!password) {
+      setPasswordError('Password is required.');
+      isValid = false;
+    } else {
+      setPasswordError('');
+    }
+
+    if (password !== confirmPassword) {
+      setConfirmPasswordError('Passwords do not match.');
+      isValid = false;
+    } else {
+      setConfirmPasswordError('');
+    }
+
+    if (!role) {
+      setRoleError('Role is required.');
+      isValid = false;
+    } else {
+      setRoleError('');
+    }
+
+    if (isValid) {
+      try {
+        const res = await register({ name, email, password, role }).unwrap(); 
+        dispatch(setCredentials({ ...res }));
+        navigate('/');
+      } catch (err) {
+        const errorMessage = err?.data?.message || err.error;
+        if (errorMessage.includes("email")) {
+          setEmailError(errorMessage);
         } else {
-            setEmailError('');
+          setPasswordError(errorMessage);
         }
-    };
+      }
+    }
+  };
 
-    const submitHandler = async (e) => {
-        e.preventDefault();
-        let isValid = true;
-
-        if (!name) {
-            setNameError('Name is required.');
-            isValid = false;
-        } else {
-            setNameError('');
-        }
-
-        if (!email) {
-            setEmailError('Email is required.');
-            isValid = false;
-        } else if (!validateEmail(email)) {
-            setEmailError('Please enter a valid email address.');
-            isValid = false;
-        } else {
-            setEmailError('');
-        }
-
-        if (!password) {
-            setPasswordError('Password is required.');
-            isValid = false;
-        } else {
-            setPasswordError('');
-        }
-
-        if (password !== confirmPassword) {
-            setConfirmPasswordError('Passwords do not match.');
-            isValid = false;
-        } else {
-            setConfirmPasswordError('');
-        }
-
-        if (!role) {
-            setRoleError('Role is required.');
-            isValid = false;
-        } else {
-            setRoleError('');
-        }
-
-        if (isValid) {
-            try {
-                const res = await register({ name, email, password, role }).unwrap(); 
-                dispatch(setCredentials({ ...res }));
-                navigate('/');
-            } catch (err) {
-                const errorMessage = err?.data?.message || err.error;
-                if (errorMessage.includes("email")) {
-                    setEmailError(errorMessage);
-                } else {
-                    setPasswordError(errorMessage);
-                }
-            }
-        }
-    };
-
-    return (
-        <>
-        <FormContainer>
-            <h1>Sign Up</h1>
-        
-            <Form onSubmit={submitHandler}>
-                <Form.Group className="my-2" controlId="name">
-                    <Form.Label>Name</Form.Label>
-                    <Form.Control 
-                        type='text'
-                        placeholder="Enter name"
-                        value={name}
-                        onChange={(e) => setName(e.target.value)}
-                    ></Form.Control>
-                    {nameError && <Message variant='danger'>{nameError}</Message>}
-                </Form.Group>
-
-                <Form.Group className="my-2" controlId="email">
-                    <Form.Label>Email Address</Form.Label>
-                    <Form.Control 
-                        type='email'
-                        placeholder="Enter email"
-                        value={email}
-                        onChange={handleEmailChange}
-                    ></Form.Control>
-                    {emailError && <Message variant='danger'>{emailError}</Message>}
-                </Form.Group>
-
-                <Form.Group className="my-2" controlId="password">
-                    <Form.Label>Password</Form.Label>
-                    <Form.Control 
-                        type='password'
-                        placeholder="Enter password"
-                        value={password}
-                        onChange={(e) => setPassword(e.target.value)}
-                    ></Form.Control>
-                    {passwordError && <Message variant='danger'>{passwordError}</Message>}
-                </Form.Group>
-
-                <Form.Group className="my-2" controlId="confirmPassword">
-                    <Form.Label>Confirm Password</Form.Label>
-                    <Form.Control 
-                        type='password'
-                        placeholder="Confirm password"
-                        value={confirmPassword}
-                        onChange={(e) => setConfirmPassword(e.target.value)}
-                    ></Form.Control>
-                    {confirmPasswordError && <Message variant='danger'>{confirmPasswordError}</Message>}
-                </Form.Group>
-
-                <Form.Group className="my-2" controlId="role">
-                    <Form.Label>Role</Form.Label>
-                    <Form.Control 
-                        as='select'
-                        value={role}
-                        onChange={(e) => setRole(e.target.value)}
-                    >
-                        <option value=''>Select Role</option>
-                        <option value='student'>Student</option>
-                        <option value='teacher'>Teacher</option>
-                    </Form.Control>
-                    {roleError && <Message variant='danger'>{roleError}</Message>}
-                </Form.Group>
-
-                {isLoading && <Loader />}
-
-                <Button type="submit" variant="primary" className="mt-3">
-                    Sign Up
-                </Button>
-              
-                <Row className="py-3">
-                    <Col>
-                        Already have an account? <Link to='/login'>Login here</Link>
-                    </Col>
-                </Row>
-                <Row className="py-3">
-                    <Col>
-                        Click here to go <Link to ='/' style={{ color: 'blue' }}>back</Link> 
-                    </Col>
-                </Row>
-            </Form>
-        </FormContainer>
-        </>
-    );
+  return (
+    <ThemeProvider theme={defaultTheme}>
+      <Container component="main" maxWidth="sm">
+        <CssBaseline />
+        <Box
+          sx={{
+            marginTop: 8,
+            display: 'flex',
+            flexDirection: 'column',
+            alignItems: 'center',
+          }}
+        >
+          <Avatar sx={{ m: 1, bgcolor: 'secondary.main' }}>
+            <LockOutlinedIcon />
+          </Avatar>
+          <Typography component="h1" variant="h5">
+            Sign up
+          </Typography>
+          <Box component="form" noValidate onSubmit={submitHandler} sx={{ mt: 3 }}>
+            <Grid container spacing={2}>
+              <Grid item xs={12}>
+                <TextField
+                  required
+                  fullWidth
+                  id="name"
+                  label="Name"
+                  name="name"
+                  value={name}
+                  onChange={(e) => setName(e.target.value)}
+                  error={!!nameError}
+                  helperText={nameError}
+                />
+              </Grid>
+              <Grid item xs={12}>
+                <TextField
+                  required
+                  fullWidth
+                  id="email"
+                  label="Email Address"
+                  name="email"
+                  value={email}
+                  onChange={handleEmailChange}
+                  error={!!emailError}
+                  helperText={emailError}
+                />
+              </Grid>
+              <Grid item xs={12}>
+                <TextField
+                  required
+                  fullWidth
+                  name="password"
+                  label="Password"
+                  type="password"
+                  id="password"
+                  value={password}
+                  onChange={(e) => setPassword(e.target.value)}
+                  error={!!passwordError}
+                  helperText={passwordError}
+                />
+              </Grid>
+              <Grid item xs={12}>
+                <TextField
+                  required
+                  fullWidth
+                  name="confirmPassword"
+                  label="Confirm Password"
+                  type="password"
+                  id="confirmPassword"
+                  value={confirmPassword}
+                  onChange={(e) => setConfirmPassword(e.target.value)}
+                  error={!!confirmPasswordError}
+                  helperText={confirmPasswordError}
+                />
+              </Grid>
+              <Grid item xs={12}>
+                <TextField
+                  select
+                  fullWidth
+                  name="role"
+                  label="Select Role"
+                  id="role"
+                  value={role}
+                  onChange={(e) => setRole(e.target.value)}
+                  SelectProps={{
+                    native: true,
+                  }}
+                  error={!!roleError}
+                  helperText={roleError}
+                >
+                  <option value=''>Select Role</option>
+                  <option value='student'>Student</option>
+                  <option value='teacher'>Teacher</option>
+                </TextField>
+              </Grid>
+              <Grid item xs={12}>
+                <FormControlLabel
+                  control={<Checkbox value="allowExtraEmails" color="primary" />}
+                  label="I want to receive inspiration, marketing promotions and updates via email."
+                />
+              </Grid>
+            </Grid>
+            {isLoading && <Loader />}
+            <Button
+              type="submit"
+              fullWidth
+              variant="contained"
+              sx={{ mt: 3, mb: 2 }}
+            >
+              Sign Up
+            </Button>
+            <Grid container justifyContent="flex-end">
+              <Grid item>
+                <Link component={RouterLink} to="/login" variant="body2">
+                  Already have an account? Sign in
+                </Link>
+              </Grid>
+            </Grid>
+            
+          </Box>
+        </Box>
+      </Container>
+    </ThemeProvider>
+  );
 }
 
 export default RegisterScreen;

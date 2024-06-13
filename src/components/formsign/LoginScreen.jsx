@@ -1,37 +1,60 @@
-import { useState, useEffect } from "react";
-import { Link, useNavigate, useLocation } from "react-router-dom";
-import { useLoginMutation } from "../../slices/usersApiSlice";
-import { Form, Button, Row, Col } from 'react-bootstrap';
+import React, { useState, useEffect } from 'react';
+import { Link as RouterLink, useNavigate, useLocation } from 'react-router-dom';
 import { useDispatch, useSelector } from 'react-redux';
-import FormContainer from "./FormContainer";
-import { setCredentials } from "../../slices/authSlice";
-import React from 'react';
-import Loader from "../Loader";
+import { useLoginMutation } from '../../slices/usersApiSlice';
+import { setCredentials } from '../../slices/authSlice';
+import Loader from '../Loader';
+import Avatar from '@mui/material/Avatar';
+import Button from '@mui/material/Button';
+import CssBaseline from '@mui/material/CssBaseline';
+import TextField from '@mui/material/TextField';
+import FormControlLabel from '@mui/material/FormControlLabel';
+import Checkbox from '@mui/material/Checkbox';
+import Link from '@mui/material/Link';
+import Paper from '@mui/material/Paper';
+import Box from '@mui/material/Box';
+import Grid from '@mui/material/Grid';
+import LockOutlinedIcon from '@mui/icons-material/LockOutlined';
+import Typography from '@mui/material/Typography';
+import { createTheme, ThemeProvider } from '@mui/material/styles';
+
+const defaultTheme = createTheme();
+
+function Copyright(props) {
+    return (
+        <Typography variant="body2" color="text.secondary" align="center" {...props}>
+            {'Copyright © '}
+            <Link color="inherit" href="https://alsiddegmohmmed.github.io/">
+                Siddeg
+            </Link>{' '}
+            {new Date().getFullYear()}
+            {'.'}
+        </Typography>
+    );
+}
 
 const LoginScreen = () => {
-    const [email, setEmail] = useState(''); 
-    const [password, setPassword] = useState(''); 
+    const [email, setEmail] = useState('');
+    const [password, setPassword] = useState('');
     const [emailError, setEmailError] = useState('');
     const [passwordError, setPasswordError] = useState('');
 
-    const navigate = useNavigate(); 
-    const dispatch = useDispatch(); 
-    const location = useLocation();
-
-    const [login, { isLoading }] = useLoginMutation(); 
-    const { userInfo } = useSelector((state) => state.auth); 
+    const navigate = useNavigate();
+    const dispatch = useDispatch();
+    const { userInfo } = useSelector((state) => state.auth);
+    const [login, { isLoading }] = useLoginMutation();
 
     useEffect(() => {
         if (userInfo) {
-            const params = new URLSearchParams(location.search);
-            const role = params.get('role');
-            if (role === 'teacher') {
+            if (userInfo.role === 'teacher') {
                 navigate('/teacher-dashboard');
-            } else {
+            } else if (userInfo.role === 'student') {
                 navigate('/home');
+            } else {
+                navigate('/login');
             }
         }
-    }, [navigate, userInfo, location.search]);
+    }, [navigate, userInfo]);
 
     const validateEmail = (email) => {
         const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
@@ -74,12 +97,13 @@ const LoginScreen = () => {
             try {
                 const res = await login({ email, password }).unwrap();
                 dispatch(setCredentials({ ...res }));
-                const params = new URLSearchParams(location.search);
-                const role = params.get('role');
-                if (role === 'teacher') {
+
+                if (res.role === 'teacher') {
                     navigate('/teacher-dashboard');
-                } else {
+                } else if (res.role === 'student') {
                     navigate('/home');
+                } else {
+                    navigate('/login');
                 }
             } catch (err) {
                 const errorMessage = err?.data?.message || err.error;
@@ -92,50 +116,102 @@ const LoginScreen = () => {
         }
     };
 
+
     return (
-        <FormContainer>
-            <h1>Sign In</h1>
-            <Form onSubmit={submitHandler}>
-                <Form.Group className="my-2" controlId="email">
-                    <Form.Label>Email Address</Form.Label>
-                    <Form.Control 
-                        type='email'
-                        placeholder="Enter email"
-                        value={email}
-                        onChange={handleEmailChange}
-                    ></Form.Control>
-                    {emailError && <div style={{ color: 'red' }}>{emailError}</div>}
-                </Form.Group>
-
-                <Form.Group className="my-2" controlId="password">
-                    <Form.Label>Password</Form.Label>
-                    <Form.Control 
-                        type='password'
-                        placeholder="Enter password"
-                        value={password}
-                        onChange={(e) => setPassword(e.target.value)}
-                    ></Form.Control>
-                    {passwordError && <div style={{ color: 'red' }}>{passwordError}</div>}
-                </Form.Group>
-
-                {isLoading && <Loader />}
-
-                <Button type="submit" variant="primary" className="mt-3">
-                    Sign In
-                </Button>
-
-                <Row className="py-3">
-                    <Col>
-                        New customer? <Link to='/register'>Register</Link>
-                    </Col>
-                </Row>
-                <Row className="py-3">
-                    <Col>
-                        Click here to go<Link to ='/'  style={{ color: 'blue' }}> back</Link> 
-                    </Col>
-                </Row>
-            </Form>
-        </FormContainer>
+        <ThemeProvider theme={defaultTheme}>
+            <Grid container component="main" sx={{ height: '100vh' }}>
+                <CssBaseline />
+                <Grid
+                    item
+                    xs={false}
+                    sm={4}
+                    md={7}
+                    sx={{
+                        backgroundImage: 'url(https://images.unsplash.com/photo-1524178232363-1fb2b075b655?q=80&w=3270&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D)',
+                        backgroundRepeat: 'no-repeat',
+                        backgroundColor: (t) =>
+                            t.palette.mode === 'light' ? t.palette.grey[50] : t.palette.grey[900],
+                        backgroundSize: 'cover',
+                        backgroundPosition: 'center',
+                    }}
+    
+                />
+                <Grid item xs={12} sm={8} md={5} component={Paper} elevation={6} square>
+                    <Box
+                        sx={{
+                            my: 8,
+                            mx: 4,
+                            display: 'flex',
+                            flexDirection: 'column',
+                            alignItems: 'center',
+                        }}
+                    >
+                        <Avatar sx={{ m: 1, bgcolor: 'secondary.main' }}>
+                            <LockOutlinedIcon />
+                        </Avatar>
+                        <Typography component="h1" variant="h5">
+                            Sign in
+                        </Typography>
+                        <Box component="form" noValidate onSubmit={submitHandler} sx={{ mt: 1 }}>
+                            <TextField
+                                margin="normal"
+                                required
+                                fullWidth
+                                id="email"
+                                label="Email Address"
+                                name="email"
+                                autoComplete="email"
+                                autoFocus
+                                value={email}
+                                onChange={handleEmailChange}
+                                error={!!emailError}
+                                helperText={emailError}
+                            />
+                            <TextField
+                                margin="normal"
+                                required
+                                fullWidth
+                                name="password"
+                                label="Password"
+                                type="password"
+                                id="password"
+                                autoComplete="current-password"
+                                value={password}
+                                onChange={(e) => setPassword(e.target.value)}
+                                error={!!passwordError}
+                                helperText={passwordError}
+                            />
+                            <FormControlLabel
+                                control={<Checkbox value="remember" color="primary" />}
+                                label="Remember me"
+                            />
+                            {isLoading && <Loader />}
+                            <Button
+                                type="submit"
+                                fullWidth
+                                variant="contained"
+                                sx={{ mt: 3, mb: 2 }}
+                            >
+                                Sign In
+                            </Button>
+                            <Grid container>
+                                <Grid item xs>
+                                    <Link href="#" variant="body2">
+                                        Forgot password?
+                                    </Link>
+                                </Grid>
+                                <Grid item>
+                                    <Link component={RouterLink} to="/register" variant="body2">
+                                        {"Don't have an account? Sign Up"}
+                                    </Link>
+                                </Grid>
+                            </Grid>
+                            <Copyright sx={{ mt: 5 }} />
+                        </Box>
+                    </Box>
+                </Grid>
+            </Grid>
+        </ThemeProvider>
     );
 }
 

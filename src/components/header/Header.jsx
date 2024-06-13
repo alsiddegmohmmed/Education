@@ -24,7 +24,7 @@ const Header = () => {
   const [isOpen, setIsOpen] = React.useState(false);
   const [dropdownOpen, setDropdownOpen] = React.useState(false);
   const {userInfo} = useSelector((state) => state.auth );
-  const  [logoutApiCall] = useLogoutMutation(); 
+  const [logoutApiCall] = useLogoutMutation(); 
   const dispatch = useDispatch(); 
   const navigate = useNavigate(); 
 
@@ -38,10 +38,15 @@ const Header = () => {
   };
 
 
-  const logoutHandler = () => {
-    localStorage.removeItem('authToken');
-    dispatch(logout());
-    navigate('/welcome');
+ 
+  const logoutHandler = async () => {
+    try {
+      await logoutApiCall().unwrap(); 
+      dispatch(logout()); 
+      navigate('/login');
+    } catch (err) {
+      console.log(err);
+    }
   };
 
   return (
