@@ -8,6 +8,7 @@ import Course from '../models/coursesModel.js';
 // @access Public
 const authUser = asyncHandler(async (req, res) => {
     const { email, password } = req.body;
+    console.log('Authenticating user:', email);
 
     const user = await User.findOne({ email });
 

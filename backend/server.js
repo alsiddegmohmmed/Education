@@ -11,6 +11,7 @@ import studentRoutes from "./routes/studentRoutes.js"
 import mongoose from "mongoose";
 import User from "./models/userModel.js";
 import cors from "cors"
+import { authUser } from "./controllers/userController.js";
 
 
 dotenv.config();
@@ -72,6 +73,11 @@ if (process.env.NODE_ENV === 'production') {
     }
   });
 
+  app.post('/auth', authUser);
+  app.use((err, req, res, next) => {
+    console.error(err.stack);
+    res.status(500).json({ error: 'Something went wrong!' });
+  });
 app.use(notFound); 
 app.use(errorHandler); 
 app.listen(port, () => console.log(`Server started on  port ${port}`));
