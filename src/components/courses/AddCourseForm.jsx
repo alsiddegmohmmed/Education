@@ -1,3 +1,4 @@
+// addcourseform.jsx
 import React, { useState, useContext } from 'react';
 import axios from 'axios';
 import { AuthContext } from '../context/authContext';
@@ -12,7 +13,7 @@ const AddCourseForm = () => {
   const [error, setError] = useState('');
   const [success, setSuccess] = useState('');
   const { user } = useContext(AuthContext);
-  const navigate = useNavigate(); 
+  const navigate = useNavigate();
 
   const handleFileChange = (e) => {
     setFiles(e.target.files);
@@ -27,7 +28,6 @@ const AddCourseForm = () => {
     formData.append('title', title);
     formData.append('description', description);
     formData.append('content', content);
-    formData.append('createdBy', user._id);
 
     for (let file of files) {
       formData.append('files', file);
@@ -37,6 +37,7 @@ const AddCourseForm = () => {
       await axios.post('http://localhost:5000/api/users/courses', formData, {
         headers: {
           'Content-Type': 'multipart/form-data',
+          'Authorization': `Bearer ${user.token}`, // Add JWT token to headers
         },
       });
       setSuccess('Course uploaded successfully!');
@@ -112,7 +113,6 @@ const AddCourseForm = () => {
       </Box>
       <Button variant="primary" onClick={handleTeacherHomeRedirect} className='me-2'>Go to home page </Button>
     </Container>
-
   );
 };
 
